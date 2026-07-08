@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Polla Familiar · Mundial 2026 · Cuartos de Final</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Oswald:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --pitch:#071F17;
+    --turf:#0F3A28;
+    --turf-light:#175E3D;
+    --gold:#F2B705;
+    --gold-dim:#8a6d1f;
+    --chalk:#F5F5F0;
+    --chalk-dim:#AEC2B6;
+    --coral:#E5533D;
+    --line:rgba(245,245,240,0.12);
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:
+      radial-gradient(circle at 50% 0%, rgba(242,183,5,0.14), transparent 50%),
+      var(--pitch);
+    color:var(--chalk);
+    font-family:'Oswald',sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  /* ---------- HERO: copa central + banderas orbitando ---------- */
+  .hero{
+    position:relative;
+    padding:44px 20px 30px;
+    text-align:center;
+    overflow:hidden;
+  }
+  .orbit{
+    position:relative;
+    width:min(340px, 78vw);
+    height:min(340px, 78vw);
+    margin:0 auto 14px;
+  }
+  .orbit .ring{
+    position:absolute; inset:0;
+    border:1px dashed rgba(242,183,5,0.25);
+    border-radius:50%;
+  }
+  .orbit .trophy{
+    position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+    font-size:54px;
+    filter:drop-shadow(0 0 22px rgba(242,183,5,0.55));
+  }
+  .orbit .flag-node{
+    position:absolute;
+    width:44px; height:44px;
+    display:flex; align-items:center; justify-content:center;
+    font-size:22px;
+    background:rgba(255,255,255,0.06);
+    border:1px solid var(--line);
+    border-radius:50%;
+    backdrop-filter:blur(2px);
+  }
+  .kicker{
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;
+    letter-spacing:.25em;
+    color:var(--gold);
+    text-transform:uppercase;
+  }
+  h1{
+    font-family:'Anton',sans-serif;
+    font-weight:400;
+    font-size:clamp(30px,7vw,46px);
+    letter-spacing:.02em;
+    margin:8px 0 4px;
+    line-height:1.03;
+  }
+  h1 span{color:var(--gold);}
+  .sub{
+    color:var(--chalk-dim);
+    font-size:14px;
+    max-width:440px;
+    margin:0 auto;
+  }
+
+  .tabs{
+    display:flex; justify-content:center; gap:8px;
+    margin:20px auto 0; max-width:420px; padding:0 20px;
+  }
+  .tab-btn{
+    flex:1;
+    background:transparent;
+    border:1px solid var(--line);
+    color:var(--chalk-dim);
+    font-family:'Oswald',sans-serif;
+    font-weight:600;
+    font-size:13px;
+    letter-spacing:.04em;
+    text-transform:uppercase;
+    padding:11px 8px;
+    border-radius:8px;
+    cursor:pointer;
+    transition:all .15s;
+  }
+  .tab-btn.active{background:var(--gold); color:var(--pitch); border-color:var(--gold);}
+
+  main{max-width:640px; margin:0 auto; padding:26px 16px 80px;}
+  .view{display:none;}
+  .view.active{display:block;}
+
+  .name-row{display:flex; gap:10px; margin-bottom:28px;}
+  .name-row input{
+    flex:1;
+    background:var(--turf);
+    border:1px solid var(--line);
+    color:var(--chalk);
+    font-family:'Oswald',sans-serif;
+    font-size:15px;
+    padding:13px 14px;
+    border-radius:8px;
+    outline:none;
+  }
+  .name-row input:focus{border-color:var(--gold);}
+  .name-row input::placeholder{color:var(--chalk-dim);}
+
+  .match-stage{
+    font-family:'JetBrains Mono',monospace;
+    font-size:10px;
+    letter-spacing:.2em;
+    color:var(--gold-dim);
+    text-transform:uppercase;
+    margin-bottom:8px;
+  }
+  .venue{color:var(--chalk-dim); font-weight:400; text-transform:none; letter-spacing:0;}
+
+  .quarter-card{margin-bottom:30px;}
+  .team-row{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+  }
+  .team-btn{
+    position:relative;
+    border:2px solid transparent;
+    border-radius:14px;
+    padding:22px 12px;
+    cursor:pointer;
+    color:#fff;
+    text-align:center;
+    overflow:hidden;
+    transition:transform .12s, border-color .12s;
+  }
+  .team-btn:active{transform:scale(0.97);}
+  .team-btn::after{
+    content:'';
+    position:absolute; inset:0;
+    background:linear-gradient(180deg, rgba(0,0,0,0) 40%, rgba(0,0,0,0.45) 100%);
+  }
+  .team-btn .flag{
+    font-size:34px;
+    display:block;
+    margin-bottom:8px;
+    position:relative; z-index:1;
+    filter:drop-shadow(0 2px 4px rgba(0,0,0,0.4));
+  }
+  .team-btn .name{
+    font-family:'Oswald',sans-serif;
+    font-weight:700;
+    font-size:14px;
+    letter-spacing:.03em;
+    text-transform:uppercase;
+    position:relative; z-index:1;
+    text-shadow:0 1px 4px rgba(0,0,0,0.5);
+  }
+  .team-btn.selected{
+    border-color:var(--gold);
+    box-shadow:0 0 0 3px rgba(242,183,5,0.25), 0 8px 20px rgba(0,0,0,0.4);
+    transform:translateY(-2px);
+  }
+  .team-btn.selected::before{
+    content:'✓';
+    position:relative;
+    z-index:2;
+  }
+
+  .team-FRA{background:linear-gradient(135deg,#0055A4,#5b8bc7 45%,#EF4135);}
+  .team-MAR{background:linear-gradient(135deg,#C1272D,#8a1d21 45%,#006233);}
+  .team-ESP{background:linear-gradient(135deg,#AA151B,#c73a30 45%,#F1BF00);}
+  .team-BEL{background:linear-gradient(135deg,#111111,#8a7300 45%,#EF3340);}
+  .team-NOR{background:linear-gradient(135deg,#BA0C2F,#7a1030 45%,#00205B);}
+  .team-ING{background:linear-gradient(135deg,#CE1124,#8a1a2a 45%,#3a3a3a);}
+  .team-ARG{background:linear-gradient(135deg,#5AA9E6,#3f7fb8 45%,#0b3d5c);}
+  .team-SUI{background:linear-gradient(135deg,#D52B1E,#a3211a 45%,#7a1712);}
+
+  .vs-tag{
+    text-align:center;
+    font-family:'Anton',sans-serif;
+    color:var(--gold-dim);
+    font-size:12px;
+    letter-spacing:.15em;
+    margin:8px 0;
+  }
+
+  .summary-box{
+    margin-top:10px;
+    background:var(--turf-light);
+    border-radius:14px;
+    padding:22px;
+    text-align:center;
+  }
+  .summary-box h3{
+    font-family:'Anton',sans-serif;
+    font-size:20px;
+    margin:0 0 14px;
+    color:var(--gold);
+  }
+  .semis-grid{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:16px;}
+  .semi-team{
+    background:rgba(0,0,0,0.25);
+    border-radius:10px;
+    padding:14px 8px;
+    font-size:14px;
+    font-weight:700;
+    letter-spacing:.02em;
+  }
+  .semi-team .flag{font-size:22px; display:block; margin-bottom:4px;}
+  .semi-team.empty{color:var(--chalk-dim); font-weight:400; font-style:italic; font-size:12px;}
+
+  .action-btn{
+    width:100%; display:block;
+    font-family:'Oswald',sans-serif;
+    font-weight:600; font-size:14px; letter-spacing:.03em; text-transform:uppercase;
+    padding:14px; border-radius:8px; border:none; cursor:pointer;
+    margin-top:10px; text-decoration:none; text-align:center;
+  }
+  .btn-gold{background:var(--gold); color:var(--pitch);}
+  .btn-whatsapp{background:#25D366; color:#04210f;}
+  .btn-ghost{background:transparent; border:1px solid var(--line); color:var(--chalk);}
+
+  .link-box{
+    background:rgba(0,0,0,0.25); border-radius:8px; padding:10px 12px;
+    font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--chalk-dim);
+    word-break:break-all; margin-top:12px;
+  }
+
+  textarea{
+    width:100%; min-height:110px;
+    background:var(--turf); border:1px solid var(--line); border-radius:8px;
+    color:var(--chalk); font-family:'JetBrains Mono',monospace; font-size:12px;
+    padding:12px; resize:vertical;
+  }
+
+  table.leaderboard{width:100%; border-collapse:collapse; margin-top:18px;}
+  table.leaderboard th{
+    text-align:left; font-family:'JetBrains Mono',monospace; font-size:10px;
+    letter-spacing:.1em; color:var(--gold-dim); text-transform:uppercase;
+    padding:8px 6px; border-bottom:1px solid var(--line);
+  }
+  table.leaderboard td{padding:10px 6px; border-bottom:1px solid var(--line); font-size:14px;}
+  table.leaderboard tr:first-child td{color:var(--gold); font-weight:700;}
+  .pts{font-family:'JetBrains Mono',monospace; text-align:right;}
+
+  .section-title{
+    font-family:'Anton',sans-serif; font-size:18px; color:var(--gold); margin:30px 0 12px;
+  }
+  .empty-state{
+    color:var(--chalk-dim); font-size:13px; text-align:center; padding:30px 0;
+    border:1px dashed var(--line); border-radius:10px;
+  }
+  .clear-link{
+    display:block; text-align:center; color:var(--chalk-dim);
+    font-size:12px; margin-top:18px; cursor:pointer; text-decoration:underline;
+  }
+  .pot-badge{
+    display:inline-block; margin-top:6px;
+    background:rgba(242,183,5,0.12); border:1px solid var(--gold-dim);
+    color:var(--gold); font-family:'JetBrains Mono',monospace; font-size:11px;
+    padding:4px 10px; border-radius:20px;
+  }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="kicker">FIFA · 2026 · Polla Familiar</div>
+  <div class="orbit">
+    <div class="ring"></div>
+    <div class="trophy">🏆</div>
+  </div>
+  <h1>Cuartos de <span>Final</span></h1>
+  <p class="sub">Los 8 mejores del mundo. Elige a tus 4 semifinalistas y compite por el pozo familiar.</p>
+  <div class="pot-badge">💰 Pozo acumulado · S/ 10 por participante</div>
+</div>
+
+<div class="tabs">
+  <button class="tab-btn active" data-tab="pronostico">Mi Pronóstico</button>
+  <button class="tab-btn" data-tab="admin">Panel Admin</button>
+</div>
+
+<main>
+
+  <!-- ===================== PRONOSTICO ===================== -->
+  <section class="view active" id="view-pronostico">
+
+    <div class="name-row">
+      <input type="text" id="playerName" placeholder="Tu nombre (ej. Rigo)" maxlength="24">
+    </div>
+
+    <div id="matchesContainer"></div>
+
+    <div class="summary-box">
+      <h3>🏆 Tus 4 Semifinalistas</h3>
+      <div class="semis-grid" id="semisGrid"></div>
+      <button class="action-btn btn-gold" id="genLinkBtn">Generar mi pronóstico</button>
+      <div id="shareArea" style="display:none;">
+        <a class="action-btn btn-whatsapp" id="waBtn" target="_blank">Enviar por WhatsApp</a>
+        <button class="action-btn btn-ghost" id="copyBtn">Copiar link</button>
+        <div class="link-box" id="linkBox"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== ADMIN ===================== -->
+  <section class="view" id="view-admin">
+
+    <div class="section-title">1. Pega los pronósticos recibidos</div>
+    <p style="color:var(--chalk-dim); font-size:13px; margin-top:-6px;">Pega aquí los links que te enviaron por WhatsApp (uno por línea) y presiona Cargar.</p>
+    <textarea id="pasteBox" placeholder="https://tu-sitio.github.io/cuartos-final.html?p=...
+https://tu-sitio.github.io/cuartos-final.html?p=..."></textarea>
+    <button class="action-btn btn-gold" id="loadBtn">Cargar pronósticos</button>
+
+    <div class="section-title">2. Marca los resultados reales</div>
+    <div id="adminMatchesContainer"></div>
+
+    <div class="section-title">3. Tabla de posiciones</div>
+    <div id="leaderboardArea"><div class="empty-state">Aún no hay pronósticos cargados.</div></div>
+
+    <span class="clear-link" id="resetAdmin">Borrar todos los datos del panel admin</span>
+  </section>
+
+</main>
+
+<script>
+/* ---------- DATOS BASE: Cuartos de Final (8 clasificados confirmados) ---------- */
+const FLAGS = { FRA:'🇫🇷', MAR:'🇲🇦', ESP:'🇪🇸', BEL:'🇧🇪', NOR:'🇳🇴', ING:'🏴', ARG:'🇦🇷', SUI:'🇨🇭' };
+const NAMES = { FRA:'Francia', MAR:'Marruecos', ESP:'España', BEL:'Bélgica', NOR:'Noruega', ING:'Inglaterra', ARG:'Argentina', SUI:'Suiza' };
+
+const CUARTOS = [
+  {id:'Q1', name:'Partido 97', venue:'Boston', home:'FRA', away:'MAR'},
+  {id:'Q2', name:'Partido 98', venue:'Los Ángeles', home:'ESP', away:'BEL'},
+  {id:'Q3', name:'Partido 99', venue:'Miami', home:'NOR', away:'ING'},
+  {id:'Q4', name:'Partido 100', venue:'Kansas City', home:'ARG', away:'SUI'},
+];
+
+/* Orbita de banderas alrededor de la copa */
+(function buildOrbit(){
+  const orbit = document.querySelector('.orbit');
+  const codes = Object.keys(FLAGS);
+  const r = orbit.offsetWidth ? orbit.offsetWidth/2 : 150;
+  codes.forEach((code,i)=>{
+    const angle = (i/codes.length) * 2*Math.PI - Math.PI/2;
+    const node = document.createElement('div');
+    node.className = 'flag-node';
+    node.textContent = FLAGS[code];
+    node.style.left = `calc(50% + ${Math.cos(angle)*(r-22)}px - 22px)`;
+    node.style.top = `calc(50% + ${Math.sin(angle)*(r-22)}px - 22px)`;
+    orbit.appendChild(node);
+  });
+})();
+
+let picks = {}; // { Q1:'FRA', Q2:'BEL', ... }
+
+function teamLabel(code){ return `${FLAGS[code]} ${NAMES[code]}`; }
+
+/* ---------- RENDER: Pronóstico ---------- */
+function renderMatches(){
+  const container = document.getElementById('matchesContainer');
+  container.innerHTML = '';
+  CUARTOS.forEach(m=>{
+    container.appendChild(buildMatchCard(m));
+  });
+  renderSemisSummary();
+}
+
+function buildMatchCard(m){
+  const div = document.createElement('div');
+  div.className = 'quarter-card';
+  div.innerHTML = `
+    <div class="match-stage">CUARTOS · ${m.id} · ${m.name} <span class="venue">— ${m.venue}</span></div>
+    <div class="team-row">
+      <button class="team-btn team-${m.home}" data-match="${m.id}" data-team="${m.home}">
+        <span class="flag">${FLAGS[m.home]}</span>
+        <span class="name">${NAMES[m.home]}</span>
+      </button>
+      <button class="team-btn team-${m.away}" data-match="${m.id}" data-team="${m.away}">
+        <span class="flag">${FLAGS[m.away]}</span>
+        <span class="name">${NAMES[m.away]}</span>
+      </button>
+    </div>
+  `;
+  div.querySelectorAll('.team-btn').forEach(btn=>{
+    if(picks[m.id] === btn.dataset.team) btn.classList.add('selected');
+    btn.addEventListener('click', ()=>{
+      picks[m.id] = btn.dataset.team;
+      renderMatches();
+    });
+  });
+  return div;
+}
+
+function renderSemisSummary(){
+  const grid = document.getElementById('semisGrid');
+  grid.innerHTML = '';
+  CUARTOS.forEach(c=>{
+    const winner = picks[c.id];
+    const div = document.createElement('div');
+    if(winner){
+      div.className = 'semi-team';
+      div.innerHTML = `<span class="flag">${FLAGS[winner]}</span>${NAMES[winner]}`;
+    }else{
+      div.className = 'semi-team empty';
+      div.textContent = '— pendiente —';
+    }
+    grid.appendChild(div);
+  });
+}
+
+/* ---------- Generar / compartir pronóstico ---------- */
+document.getElementById('genLinkBtn').addEventListener('click', ()=>{
+  const name = document.getElementById('playerName').value.trim() || 'Familiar';
+  const allDone = CUARTOS.every(m=>picks[m.id]);
+  if(!allDone){
+    alert('Completa los 4 Cuartos antes de generar tu pronóstico.');
+    return;
+  }
+  const payload = {n:name, p:picks};
+  const encoded = btoa(encodeURIComponent(JSON.stringify(payload)));
+  const url = `${location.origin}${location.pathname}?p=${encoded}`;
+
+  document.getElementById('shareArea').style.display = 'block';
+  document.getElementById('linkBox').textContent = url;
+  document.getElementById('waBtn').href = `https://wa.me/?text=${encodeURIComponent('⚽ Mi pronóstico de Semifinalistas ('+name+'): '+url)}`;
+
+  document.getElementById('copyBtn').onclick = ()=>{
+    navigator.clipboard.writeText(url);
+    document.getElementById('copyBtn').textContent = '¡Copiado!';
+    setTimeout(()=>document.getElementById('copyBtn').textContent='Copiar link', 1500);
+  };
+});
+
+(function preload(){
+  const params = new URLSearchParams(location.search);
+  if(params.get('p')){
+    try{
+      const data = JSON.parse(decodeURIComponent(atob(params.get('p'))));
+      picks = data.p || {};
+      document.getElementById('playerName').value = data.n || '';
+    }catch(e){}
+  }
+})();
+
+/* ---------- TABS ---------- */
+document.querySelectorAll('.tab-btn').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+    document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('view-'+btn.dataset.tab).classList.add('active');
+  });
+});
+
+/* ==================================================
+   PANEL ADMIN
+   ================================================== */
+let submissions = JSON.parse(localStorage.getItem('polla_cuartos_submissions') || '[]');
+let realResults = JSON.parse(localStorage.getItem('polla_cuartos_results') || '{}');
+
+function saveAdminState(){
+  localStorage.setItem('polla_cuartos_submissions', JSON.stringify(submissions));
+  localStorage.setItem('polla_cuartos_results', JSON.stringify(realResults));
+}
+
+document.getElementById('loadBtn').addEventListener('click', ()=>{
+  const raw = document.getElementById('pasteBox').value.trim();
+  if(!raw) return;
+  const lines = raw.split('\n').map(l=>l.trim()).filter(Boolean);
+  let added = 0;
+  lines.forEach(line=>{
+    try{
+      const u = new URL(line);
+      const p = u.searchParams.get('p');
+      if(!p) return;
+      const data = JSON.parse(decodeURIComponent(atob(p)));
+      if(!submissions.some(s=>s.n===data.n && JSON.stringify(s.p)===JSON.stringify(data.p))){
+        submissions.push(data);
+        added++;
+      }
+    }catch(e){ /* línea inválida, se ignora */ }
+  });
+  saveAdminState();
+  document.getElementById('pasteBox').value = '';
+  renderAdmin();
+  if(added===0) alert('No se encontraron links válidos nuevos.');
+});
+
+function renderAdmin(){
+  renderAdminMatches();
+  renderLeaderboard();
+}
+
+function renderAdminMatches(){
+  const container = document.getElementById('adminMatchesContainer');
+  container.innerHTML = '';
+  CUARTOS.forEach(m=>{
+    container.appendChild(buildAdminMatchCard(m));
+  });
+}
+
+function buildAdminMatchCard(m){
+  const div = document.createElement('div');
+  div.className = 'quarter-card';
+  div.innerHTML = `
+    <div class="match-stage">RESULTADO REAL · ${m.id} · ${m.name}</div>
+    <div class="team-row">
+      <button class="team-btn team-${m.home}" data-rmatch="${m.id}" data-team="${m.home}">
+        <span class="flag">${FLAGS[m.home]}</span><span class="name">${NAMES[m.home]}</span>
+      </button>
+      <button class="team-btn team-${m.away}" data-rmatch="${m.id}" data-team="${m.away}">
+        <span class="flag">${FLAGS[m.away]}</span><span class="name">${NAMES[m.away]}</span>
+      </button>
+    </div>
+  `;
+  div.querySelectorAll('.team-btn').forEach(btn=>{
+    if(realResults[m.id] === btn.dataset.team) btn.classList.add('selected');
+    btn.addEventListener('click', ()=>{
+      realResults[m.id] = btn.dataset.team;
+      saveAdminState();
+      renderAdmin();
+    });
+  });
+  return div;
+}
+
+function renderLeaderboard(){
+  const area = document.getElementById('leaderboardArea');
+  if(submissions.length===0){
+    area.innerHTML = '<div class="empty-state">Aún no hay pronósticos cargados.</div>';
+    return;
+  }
+  const scored = submissions.map(s=>{
+    let points = 0;
+    CUARTOS.forEach(m=>{
+      if(realResults[m.id] && s.p[m.id] === realResults[m.id]) points += 3;
+    });
+    return {name:s.n, points};
+  }).sort((a,b)=>b.points-a.points);
+
+  let rows = scored.map((s,i)=>`
+    <tr><td>${i+1}. ${s.name}</td><td class="pts">${s.points} pts</td></tr>`).join('');
+
+  area.innerHTML = `
+    <table class="leaderboard">
+      <thead><tr><th>Familiar</th><th class="pts">Puntos</th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table>
+    <p style="font-size:11px; color:var(--chalk-dim); margin-top:10px;">Puntaje: 3 pts por cada semifinalista acertado.</p>
+  `;
+}
+
+document.getElementById('resetAdmin').addEventListener('click', ()=>{
+  if(confirm('¿Borrar todos los pronósticos y resultados cargados en este panel?')){
+    submissions = [];
+    realResults = {};
+    saveAdminState();
+    renderAdmin();
+  }
+});
+
+/* ---------- INIT ---------- */
+renderMatches();
+renderAdmin();
+</script>
+</body>
+  </html>
+  
